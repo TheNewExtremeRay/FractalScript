@@ -1,113 +1,237 @@
-# EzCode
-a simple script engine based off of <a href="https://www.python.org">python</a>, made for top simplicity.
-But How Do You Even Install EzCode?
-# Installation process (windows only)
-*step 1*: install <a href="https://www.python.org/ftp/python/3.14.6/python-3.14.6-amd64.exe">python</a> (REQUIRED DEPENDENCY), you can install python from the official website or the microsoft store
+# FractalScript
 
-*step 2*: install <a href="https://www.pygame.org/news">pygame</a> (ALSO A REQUIRED DEPENDENCY), you can install pygame by: downloading python, opening powershell and type in ||pip install pygame||
+**A simple scripting engine inspired by Python, designed around one principle: simplicity.**
 
-*step 3*: download the .zip file from the releases tab, please install the [latest version](https://github.com/TheNewExtremeRay/EzCode/releases/download/1.0.0/EzCode.zip) for the best experience
+FractalScript (formerly EzCode) is an experimental scripting engine built to make scripting straightforward through a small set of commands and an easy-to-understand structure.
 
-*step 4*: extract it directly on your C: drive, important note: here's how the directory should look like "C:\EzCode\main files + Examples4EzCode\secondary examples"
+---
 
-*step 5*: this is a very important step, open the main directory, then the Examples4EzCode folder, from there right click any of the ".ez" files and click open with, choose "browse app on this computer" and go to the directory "C:\EzCode\" there you should double click "launcher.bat". That is the file you need to open, that will open a CMD window which will then show you a window for your script execution
+## Installation
 
-*step 6* (optional): download the [testing files](https://github.com/TheNewExtremeRay/EzCode/releases/download/EzCodeMainReleases/Test.Set.zip) for EzCode from the releases tab and open all the files, one by one to see if your installation was correct.
+<badge color="info">Windows only</badge>
 
-but how do you even use EzCode,
+### Requirements
 
-# Usage
+- [Python 3.14.6](https://www.python.org/ftp/python/3.14.6/python-3.14.6-amd64.exe) — Required
+- [Pygame](https://www.pygame.org/news) — Required
 
-EzCode is designed for top simplicity, so while making it i say, hmm why not just make 1 command the most powerful one?
+### Setup
 
-*set* is the most important command in the entirety of the engine, before we get there, let's start from the top and easy
+**1. Install Python**
 
-*Text Interface Format*
+Download and install Python from the [official website](https://www.python.org/) or the Microsoft Store.
 
-how to use the text interface format?
+**2. Install Pygame**
 
-at the start of each script in EzCode you have to set the format (that is due to an unfixable bug), to set a text interface format start the script by writing "Text", after that you jump a line or 2, and write "loop-loopname" to start a loop, and doing "loop-loopname-end" ends the loop, anything before the loop is considered setup. To display any text you have to write  "say ("specified text")"  
+Open PowerShell and run:
 
-An example of a text script is:
+```powershell
+pip install pygame
+```
 
-|||||||||||||||||||||||||
+**3. Download FractalScript**
 
+Download the [latest release](https://github.com/TheNewExtremeRay/EzCode/releases/download/1.0.0/EzCode.zip).
+
+**4. Extract the archive**
+
+Extract the contents directly into your `C:\` drive.
+
+Your directory structure should look like this:
+
+```text
+C:\
+└── EzCode\
+    ├── launcher.bat
+    ├── Main Files\
+    └── Examples4EzCode\
+        └── Secondary Examples\
+```
+
+**5. Configure file association**
+
+1. Open `C:\EzCode\Examples4EzCode`.
+2. Right-click any `.ez` file.
+3. Select **Open with** → **Choose another app**.
+4. Select **Choose an app on your PC**.
+5. Navigate to `C:\EzCode\`.
+6. Select `launcher.bat`.
+
+You can now open `.ez` scripts directly. The launcher opens a Command Prompt window and starts the script execution environment.
+
+**6. Test your installation (optional)**
+
+Download the [FractalScript testing files](https://github.com/TheNewExtremeRay/EzCode/releases/download/EzCodeMainReleases/Test.Set.zip) and run the included examples individually.
+
+---
+
+## Usage
+
+FractalScript was designed around simplicity. Instead of introducing a large collection of commands, its approach revolves around a central command: `set`.
+
+There are two main interface formats.
+
+### 1. Text Interface Format
+
+The Text Interface Format allows scripts to display text through a simple loop-based structure.
+
+Every script using this format must begin with:
+
+```ez
+Text
+```
+
+This format declaration is required because of an existing engine limitation.
+
+#### Basic syntax
+
+| Command | Description |
+|---|---|
+| `Text` | Declares the text interface format. |
+| `loop-name` | Starts a loop. |
+| `loop-name-end` | Ends a loop. |
+| `say ("text")` | Displays text. |
+
+Anything written before the loop is considered setup.
+
+#### Example: Hello World
+
+```ez
 Text
 
 loop-Hello
-
-say ("Hello, World!")
-
+    say ("Hello, World!")
 loop-Hello-end
+```
 
-||||||||||||||||||||||||
+Although this structure may seem verbose for simple scripts, it provides a consistent foundation for more complex projects.
 
-The EzCode contruibuters have realised that this might be too many lines, but this format truely simplifies more complex projects, especially graphical interface format files
+---
 
-*Graphical Interface Format*
+### 2. Graphical Interface Format
 
-The Graphical Interface Format was the first format made for EzCode, but how does it work? and more importantly how to use it?
+The Graphical Interface Format was the original interface format developed for FractalScript.
 
-at the start of each script in EzCode you have to set the format (that is due to an unfixable bug), to set a text interface format start the script by writing "Grid(x, y)", after that you jump a line or 2, and write "loop-loopname" to start a loop, anything before the loop is considered setup. main function of graphical interface formats is the set grid command, to set a grid to a specific color there's a hardcoded color pallete (currently no RGB custom or hex support) to set a specific grid to a color we use the set command by writing "set (Grid[r𝑥, c𝑦] {colorcode})" the neat part is that you can set a specific 1x1 image in a grid slot instead for a hardcoded color system, how do you use it? well it's very simple, just write "set (Grid[r𝑥, c𝑦] {"image directory"})
+It uses a grid-based system to create simple graphical output.
 
-here's the color code system:
+#### Initializing a grid
 
-"0" is black
+Start your script with:
 
-"1" is red 
+```ez
+Grid(x, y)
+```
 
-"2" is orange 
+Where `x` and `y` represent the grid dimensions.
 
-"3" is yellow 
+For example:
 
-"4" is lime 
+```ez
+Grid(16, 16)
+```
 
-"5" is green 
+As with the Text Interface Format, the grid declaration must appear before the main loop.
 
-"6" is dark green 
+#### The `set` command
 
-"7" is light blue 
+The `set` command is the core of the graphical interface.
 
-"8" is cyan 
+It can be used to assign a color or an image to an individual grid cell.
 
-"9" is blue 
+**Set a cell's color:**
 
-"10" is dark blue 
+```ez
+set (Grid[r1, c1] {5})
+```
 
-"11" is magenta 
+**Set a cell's image:**
 
-"12" is purple 
+```ez
+set (Grid[r1, c1] {"C:\Images\image.png"})
+```
 
-"13" is dark pink 
+The image path must point to an existing image file.
 
-"14" is pink 
+#### Color palette
 
-"15" is light pink 
+FractalScript uses a predefined color palette.
 
-"16" is dark gray 
+| Code | Color |
+|---:|---|
+| `0` | Black |
+| `1` | Red |
+| `2` | Orange |
+| `3` | Yellow |
+| `4` | Lime |
+| `5` | Green |
+| `6` | Dark Green |
+| `7` | Light Blue |
+| `8` | Cyan |
+| `9` | Blue |
+| `10` | Dark Blue |
+| `11` | Magenta |
+| `12` | Purple |
+| `13` | Dark Pink |
+| `14` | Pink |
+| `17` | White |
 
-"15" is gray 
+**Note:** The original documentation contains conflicting assignments for palette codes `15` and `16`. Their exact colors need to be verified against the implementation.
 
-"16" is light gray 
+Custom RGB and hexadecimal colors are not currently supported.
 
-"17" is white
+#### Filling rectangular areas
 
-another fact about the graphical interface format is that it's possible to fill squares with a specific color (doesn't work for images yet) by writing "set (Grid[r𝑥1, c𝑦1, r𝑥2, c𝑦2])"
+You can also fill a rectangular region of the grid using two coordinate pairs:
 
-the best example of use utilises all of the graphical interface format functions:
+```ez
+set (Grid[r1, c1, r16, c16])
+```
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+This fills the specified rectangular area with a color.
 
+*Note: Area filling currently supports colors, not images.*
+
+#### Complete graphical example
+
+This example demonstrates grid initialization, area filling, image placement, and individual cell coloring.
+
+```ez
 Grid(16, 16)
 
 loop-loop
 
-set (Grid[r1, c1, r16, c16] {5})
+    # Fill the entire grid with green
+    set (Grid[r1, c1, r16, c16] {5})
 
-set (Grid[r6, c6] {"(C:)\users\TheNewExtremeRay\Documents\image.png"})
+    # Place an image
+    set (Grid[r6, c6] {"C:\Users\YourName\Documents\image.png"})
 
-set (Grid[r5, c6] {1}).
+    # Change an individual cell to red
+    set (Grid[r5, c6] {1})
 
 loop-loop-end
+```
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+---
+
+## Project Information
+
+FractalScript is an experimental project focused on exploring simple scripting structures and graphical execution.
+
+**Formerly known as:** EzCode
+
+**Platform:** Windows
+
+**Runtime:** Python + Pygame
+
+**File extension:** `.ez`
+
+---
+
+<div align="center">
+
+**FractalScript**
+
+*Simple syntax. Creative possibilities.*
+
+</div>
