@@ -1,163 +1,177 @@
-# FractalScript
+ <div align="center">
 
-**A simple scripting engine inspired by Python, designed around one principle: simplicity.**
+# FRACTALSCRIPT
 
-FractalScript (formerly EzCode) is an experimental scripting engine built to make scripting straightforward through a small set of commands and an easy-to-understand structure.
+### A simple scripting engine built around simplicity.
+
+Formerly known as **EzCode**
+
+[![Release](https://img.shields.io/badge/Release-1.0.0-38BDF8?style=flat-square)](https://github.com/TheNewExtremeRay/EzCode/releases)
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Pygame](https://img.shields.io/badge/Pygame-2.6.1-00A86B?style=flat-square)](https://www.pygame.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=flat-square&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+
+**Less complexity. More creativity.**
+
+</div>
+
+---
+
+## Overview
+
+FractalScript is an experimental scripting engine inspired by Python, designed to make scripting accessible through a simple syntax and a small set of commands.
+
+Its philosophy is straightforward: keep things simple, make commands versatile, and let users focus on what they're building.
+
+The engine features two interface formats:
+
+| Format | Purpose |
+|:---|:---|
+| **Text Interface** | Display and organize text-based output |
+| **Graphical Interface** | Create grid-based graphical output using colors and images |
 
 ---
 
 ## Installation
 
-<badge color="info">Windows only</badge>
+<details>
+<summary><strong>Step 1 — Install Python 3.13</strong></summary>
 
-### Requirements
+FractalScript's original runtime uses Pygame 2.6.1, so use Python 3.13 for this release.
 
-- [Python 3.14.6](https://www.python.org/ftp/python/3.14.6/python-3.14.6-amd64.exe) — Required
-- [Pygame](https://www.pygame.org/news) — Required
+Download Python from the [official Python website](https://www.python.org/downloads/).
 
-### Setup
+During installation, enable **Add Python to PATH**.
 
-**1. Install Python**
+</details>
 
-Download and install Python from the [official website](https://www.python.org/) or the Microsoft Store.
+<details>
+<summary><strong>Step 2 — Install Pygame</strong></summary>
 
-**2. Install Pygame**
-
-Open PowerShell and run:
+Open PowerShell and execute:
 
 ```powershell
-pip install pygame
+py -3.13 -m pip install pygame==2.6.1
 ```
 
-**3. Download FractalScript**
+</details>
 
-Download the [latest release](https://github.com/TheNewExtremeRay/EzCode/releases/download/1.0.0/EzCode.zip).
+<details>
+<summary><strong>Step 3 — Download FractalScript</strong></summary>
 
-**4. Extract the archive**
+Download the [FractalScript 1.0.0 release](https://github.com/TheNewExtremeRay/EzCode/releases/download/1.0.0/EzCode.zip).
 
-Extract the contents directly into your `C:\` drive.
+Extract the archive directly into your `C:\` drive.
 
-Your directory structure should look like this:
+Your installation should be located at:
 
 ```text
-C:\
-└── EzCode\
-    ├── launcher.bat
-    ├── Main Files\
-    └── Examples4EzCode\
-        └── Secondary Examples\
+C:\EzCode\
+    launcher.bat
+    Main Files\
+    Examples4EzCode\
 ```
 
-**5. Configure file association**
+The archive's original folder names are retained for compatibility.
 
-1. Open `C:\EzCode\Examples4EzCode`.
+</details>
+
+<details>
+<summary><strong>Step 4 — Configure script launching</strong></summary>
+
+1. Navigate to `C:\EzCode\Examples4EzCode`.
 2. Right-click any `.ez` file.
-3. Select **Open with** → **Choose another app**.
-4. Select **Choose an app on your PC**.
+3. Select **Open with**.
+4. Choose the option to browse for an application on your computer.
 5. Navigate to `C:\EzCode\`.
 6. Select `launcher.bat`.
 
-You can now open `.ez` scripts directly. The launcher opens a Command Prompt window and starts the script execution environment.
+The launcher opens a Command Prompt window and starts the script execution environment.
 
-**6. Test your installation (optional)**
+</details>
 
-Download the [FractalScript testing files](https://github.com/TheNewExtremeRay/EzCode/releases/download/EzCodeMainReleases/Test.Set.zip) and run the included examples individually.
+<details>
+<summary><strong>Step 5 — Test your installation (optional)</strong></summary>
+
+Download the [FractalScript testing files](https://github.com/TheNewExtremeRay/EzCode/releases/download/EzCodeMainReleases/Test.Set.zip).
+
+Open the included files individually to verify that your installation works.
+
+</details>
 
 ---
 
-## Usage
+## Language Guide
 
-FractalScript was designed around simplicity. Instead of introducing a large collection of commands, its approach revolves around a central command: `set`.
+### 01. Text Interface Format
 
-There are two main interface formats.
+The Text Interface Format provides a straightforward way to display text.
 
-### 1. Text Interface Format
+Every script using this format must begin with the `Text` declaration. This requirement exists because of an engine limitation.
 
-The Text Interface Format allows scripts to display text through a simple loop-based structure.
+**Syntax reference**
 
-Every script using this format must begin with:
+| Syntax | Description |
+|:---|:---|
+| `Text` | Declares the text interface |
+| `loop-name` | Starts a loop |
+| `loop-name-end` | Ends a loop |
+| `say ("text")` | Displays text |
 
-```ez
-Text
-```
+Anything written before the main loop is considered setup.
 
-This format declaration is required because of an existing engine limitation.
+**Example — Hello World**
 
-#### Basic syntax
-
-| Command | Description |
-|---|---|
-| `Text` | Declares the text interface format. |
-| `loop-name` | Starts a loop. |
-| `loop-name-end` | Ends a loop. |
-| `say ("text")` | Displays text. |
-
-Anything written before the loop is considered setup.
-
-#### Example: Hello World
-
-```ez
+```text
 Text
 
 loop-Hello
-    say ("Hello, World!")
+
+say ("Hello, World!")
+
 loop-Hello-end
 ```
 
-Although this structure may seem verbose for simple scripts, it provides a consistent foundation for more complex projects.
+The format uses a loop-based structure to organize script execution. While it may require more lines for simple output, it provides a consistent structure for larger projects.
 
----
+### 02. Graphical Interface Format
 
-### 2. Graphical Interface Format
+The Graphical Interface Format was the first interface developed for FractalScript.
 
-The Graphical Interface Format was the original interface format developed for FractalScript.
+It uses a customizable grid to create simple graphical output.
 
-It uses a grid-based system to create simple graphical output.
+**Initializing a grid**
 
-#### Initializing a grid
-
-Start your script with:
-
-```ez
-Grid(x, y)
-```
-
-Where `x` and `y` represent the grid dimensions.
-
-For example:
-
-```ez
+```text
 Grid(16, 16)
 ```
 
-As with the Text Interface Format, the grid declaration must appear before the main loop.
+The two parameters define the grid dimensions.
 
-#### The `set` command
+**The `set` command**
 
-The `set` command is the core of the graphical interface.
+The `set` command is the central operation of the graphical interface.
 
-It can be used to assign a color or an image to an individual grid cell.
+Set an individual cell to a predefined color:
 
-**Set a cell's color:**
-
-```ez
+```text
 set (Grid[r1, c1] {5})
 ```
 
-**Set a cell's image:**
+Place an image inside a cell:
 
-```ez
+```text
 set (Grid[r1, c1] {"C:\Images\image.png"})
 ```
 
-The image path must point to an existing image file.
+Image paths must point to existing files.
 
-#### Color palette
+### Color Palette
 
 FractalScript uses a predefined color palette.
 
 | Code | Color |
-|---:|---|
+|:---:|:---|
 | `0` | Black |
 | `1` | Red |
 | `2` | Orange |
@@ -175,27 +189,23 @@ FractalScript uses a predefined color palette.
 | `14` | Pink |
 | `17` | White |
 
-**Note:** The original documentation contains conflicting assignments for palette codes `15` and `16`. Their exact colors need to be verified against the implementation.
+Custom RGB and hexadecimal colors are not supported in this release.
 
-Custom RGB and hexadecimal colors are not currently supported.
+### Rectangular Grid Filling
 
-#### Filling rectangular areas
+You can fill a rectangular area using two coordinate pairs:
 
-You can also fill a rectangular region of the grid using two coordinate pairs:
-
-```ez
-set (Grid[r1, c1, r16, c16])
+```text
+set (Grid[r1, c1, r16, c16] {5})
 ```
 
-This fills the specified rectangular area with a color.
+This fills the selected region with the specified color.
 
-*Note: Area filling currently supports colors, not images.*
+**Current limitation:** Rectangular filling supports colors, but not images.
 
-#### Complete graphical example
+### Complete Graphical Example
 
-This example demonstrates grid initialization, area filling, image placement, and individual cell coloring.
-
-```ez
+```text
 Grid(16, 16)
 
 loop-loop
@@ -206,7 +216,7 @@ loop-loop
     # Place an image
     set (Grid[r6, c6] {"C:\Users\YourName\Documents\image.png"})
 
-    # Change an individual cell to red
+    # Set an individual cell to red
     set (Grid[r5, c6] {1})
 
 loop-loop-end
@@ -214,24 +224,32 @@ loop-loop-end
 
 ---
 
-## Project Information
+## Project Details
 
-FractalScript is an experimental project focused on exploring simple scripting structures and graphical execution.
+<div align="center">
 
-**Formerly known as:** EzCode
+| Property | Information |
+|:---|:---|
+| Project name | FractalScript |
+| Former name | EzCode |
+| Runtime | Python |
+| Graphics library | Pygame |
+| Script extension | `.ez` |
+| Platform | Windows |
+| Release | 1.0.0 |
 
-**Platform:** Windows
-
-**Runtime:** Python + Pygame
-
-**File extension:** `.ez`
+</div>
 
 ---
 
 <div align="center">
 
-**FractalScript**
+### Explore FractalScript
 
-*Simple syntax. Creative possibilities.*
+[**Download**](https://github.com/TheNewExtremeRay/EzCode/releases) &nbsp; · &nbsp; [**Source Code**](https://github.com/TheNewExtremeRay/EzCode) &nbsp; · &nbsp; [**FractalLabs**](https://extremeteam.online)
+
+<br/>
+
+*Built to make scripting simple.*
 
 </div>
