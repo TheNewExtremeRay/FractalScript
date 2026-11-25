@@ -11,7 +11,7 @@
 Def {
   Library.name: "GitFetch"
   Library.version: v1.0
-  Package.identifier: "project1.ezcode.gitfetch"
+  Package.identifier: "project1.fractalscript.gitfetch"
 }
 
 // ── Fetch command ──────────────────────────────────────────

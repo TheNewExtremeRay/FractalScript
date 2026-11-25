@@ -1,7 +1,13 @@
-import re, sys, os, pygame, time
+import re, sys, os
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+import pygame, time
 from pygame.locals import *
 import library_handler as lh
 import el_compiler as elc
+
+print("FractalScript, An ExtremeRay Project, 2025-2026")
+print("For more info, please refer to https://ezcode.unaux.com")
+print()
 
 def _parse_lib_call_args(args_str):
     parts = [p.strip() for p in args_str.split(",")]
@@ -62,7 +68,7 @@ def init_screen():
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
     font = pygame.font.SysFont("Consolas", FONT_SIZE)
-    pygame.display.set_caption("EzCode Text Interface")
+    pygame.display.set_caption("FractalScript Text Interface")
     draw_text()
 
 def draw_text():
@@ -266,7 +272,7 @@ def parse_text_loop_body(lines):
                 _eparams = elc.extract_params(_ecmd["syntax"], line)
                 if _eparams is not None:
                     def _el_action(cmd=_ecmd, params=_eparams):
-                        elc.exec_command(cmd["func"], params, cmd["name"])
+                        elc.exec_command(cmd["func"], params, cmd["name"], cmd.get("bypass", False))
                     if blocks and blocks[-1].get("type") == "if_chain" and in_if_chain:
                         blocks[-1]["blocks"][-1]["actions"].append(_el_action)
                     else:

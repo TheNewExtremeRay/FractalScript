@@ -1,15 +1,15 @@
-# 📚 EzCode Library Making Guide
+# FractalScript Library Making Guide
 
-Create libraries for EzCode in two ways:
+Create libraries for FractalScript in two ways:
 
-- **🐍 Python (`.py`)** — full Python power, called via `call(Lib[...] {...})`
-- **📄 EzLibrary (`.el`)** — define new *commands* that become part of the EzCode language
+- **Python (`.py`)** — full Python power, called via `call(Lib[...] {...})`
+- **EzLibrary (`.el`)** — define new *commands* that become part of the FractalScript language
 
 ---
 
-## 📄 Making an EzLibrary (`.el`) — The Simple Way
+## EzLibrary (`.el`) — Add New Commands
 
-`.el` files let you **add new commands** to EzCode. After importing, those commands can be used directly in `.ez` scripts as if they were built-in.
+`.el` files let you **add new commands** to FractalScript. After importing, those commands can be used directly in `.ez` scripts as if they were built-in.
 
 ### The Format
 
@@ -19,12 +19,12 @@ Create libraries for EzCode in two ways:
 Def {
   Library.name: "YourLib"
   Library.version: v1.0
-  Package.identifier: "yourname.maker.yourlib"
+  Package.identifier: "yourname.project.yourlib"
 }
 
 Cmd {
   Syntax: 'CommandName("{param1}") SubCommand("{param2}")'
-  Func: 'print("param1 = " + param1); print("param2 = " + param2)'
+  Func: 'print("param1 = " + param1)'
 }
 ```
 
@@ -39,7 +39,7 @@ Cmd {
 Def {
   Library.name: "GitFetch"
   Library.version: v1.0
-  Package.identifier: "project1.ezcode.gitfetch"
+  Package.identifier: "project1.fractalscript.gitfetch"
 }
 
 Cmd {
@@ -56,7 +56,7 @@ print("Saved to: " + save_path)
 }
 ```
 
-### Using It in EzCode
+### Using It in FractalScript
 
 ```
 import gitfetch.el
@@ -82,7 +82,7 @@ That's it. The `{url}` and `{path}` placeholders from the `Syntax` template auto
 | Rule | Example |
 |------|---------|
 | Parameters in `{ }` | `Fetch("{url}")` |
-| Quoted strings match parameters | `Fetch("https://..."` → `url` = `"https://..."` |
+| Quoted strings match parameters | `Fetch("https://..."` -> `url` = `"https://..."` |
 | Multiple parts in one command | `Fetch(url) InDIR(path)` |
 | Python code in `Func:` | Multi-line or single-line, indentation matters |
 | `print()` in Func | Use `print()` — output appears in terminal |
@@ -92,14 +92,30 @@ That's it. The `{url}` and `{path}` placeholders from the `Syntax` template auto
 Your `Func:` Python code automatically has access to:
 
 - **The extracted parameters** as named variables (e.g. `url`, `path`)
-- **`print()`** — prints to terminal with `[CMD]` prefix
+- **`print()`** — prints to terminal
 - **`fetch(url)`** — simple HTTP GET helper
+- **`set_global(key, value)`** — set runner globals (for bypass mode)
 - **All Python builtins** — `str()`, `int()`, `open()`, `import`, etc.
 - **Any Python module** — `import os`, `import urllib.request`, etc.
 
+### Bypass Mode
+
+If your library needs to override the rendering loop (e.g. custom draw functions), add `Library.bypass: true` to the `Def` block:
+
+```el
+Def {
+  Library.name: "MyOverlay"
+  Library.version: v1.0
+  Package.identifier: "my.overlay.lib"
+  Library.bypass: true
+}
+```
+
+In bypass mode, `Func` code runs in the runtime module namespace. Use `runtime.set_override("draw_grid", my_func)` to override rendering.
+
 ---
 
-## 🐍 Making a Python Library (`.py`)
+## Python Libraries (`.py`)
 
 For complex logic, write a standard Python file.
 
@@ -111,7 +127,7 @@ def flash_grid():
     print("[my_tools] Grid flash!")
 ```
 
-### Calling from EzCode
+### Calling from FractalScript
 
 ```
 call(Lib[my_tools] {flash_grid})

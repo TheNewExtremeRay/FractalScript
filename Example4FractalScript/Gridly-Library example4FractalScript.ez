@@ -1,0 +1,25 @@
+// Gridly Library Demo
+// Press keys to see different grid features
+
+Grid(16, 16)
+import gridly.el
+
+loop-GridlyDemo
+  if ([keyboard] {press} = g) {
+    FillGradient(1, 1, 16, 16, 7, 12)
+  }
+  else-if ([keyboard] {press} = c) {
+    ClearGrid(0)
+    Checkerboard(1, 1, 16, 16, 15, 16)
+  }
+  else-if ([keyboard] {press} = s) {
+    ClearGrid(0)
+    FillCircle(8, 8, 5, 4)
+    DrawOutline(3, 3, 13, 13, 9)
+    DrawBorder(1, 1, 16, 16, 15, 2)
+    DrawLine(1, 1, 16, 16, 1)
+  }
+  else-if ([keyboard] {press} = x) {
+    ClearGrid(0)
+  }
+loop-GridlyDemo-end

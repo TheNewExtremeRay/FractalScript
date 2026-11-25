@@ -1,12 +1,12 @@
 """
-demo_utils.py — Example EzCode Library
+demo_utils.py — Example FractalScript Library
 
-This library demonstrates how to write functions that EzCode scripts
+This library demonstrates how to write functions that FractalScript scripts
 can call via `call(Lib[demo_utils] {FunctionName, args...})`.
 
 Library functions are plain Python — they can:
   - Accept any number of arguments
-  - Return values (results are not yet captured in EzCode, but useful for debugging)
+  - Return values (results are not yet captured in FractalScript, but useful for debugging)
   - Use Python's full standard library
   - Import and interact with the engine's globals (grid, variables, etc.)
 """
@@ -15,8 +15,8 @@ import math
 
 
 def greet(name: str) -> str:
-    """Return a greeting. Useful for testing library calls from EzCode."""
-    msg = f"Hello, {name}! Welcome to EzCode libraries."
+    """Return a greeting. Useful for testing library calls from FractalScript."""
+    msg = f"Hello, {name}! Welcome to FractalScript libraries."
     print(f"[LIB:demo_utils] {msg}")
     return msg
 

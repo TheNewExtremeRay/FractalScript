@@ -1,7 +1,7 @@
 import sys, os, subprocess
 
 ez_file = sys.argv[1]
-folder = os.path.dirname(os.path.abspath(__file__))  # selector.py folder
+folder = os.path.dirname(os.path.abspath(__file__))
 
 # Read first lines to detect type
 script_type = "unknown"
@@ -21,10 +21,14 @@ with open(ez_file, "r", encoding="utf-8") as f:
             break
 
 if script_type == "graphical":
-    print("Detected Graphical script. Launching run_ez.bat ...")
-    subprocess.run([os.path.join(folder, "run_ez.bat"), ez_file])
+    subprocess.Popen(
+        f'start "FractalScript" cmd /k "title FractalScript && python "{os.path.join(folder, "runner.py")}" "{ez_file}" && pause"',
+        shell=True
+    )
 elif script_type == "text":
-    print("Detected Text script. Launching run_ez_text.bat ...")
-    subprocess.run([os.path.join(folder, "run_ez_text.bat"), ez_file])
+    subprocess.Popen(
+        f'start "FractalScript" cmd /k "title FractalScript && python "{os.path.join(folder, "translator.py")}" "{ez_file}" && pause"',
+        shell=True
+    )
 else:
     print("Unknown script type.")

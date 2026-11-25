@@ -1,3 +1,2 @@
 @echo off
-python "C:\EzCode\selector.py" "%~1"
-pause
+start "FractalScript" cmd /k "title FractalScript && python "%~dp0selector.py" "%~1" && pause"

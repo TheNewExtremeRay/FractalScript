@@ -1,14 +1,15 @@
 """
-library_handler.py — EzCode Library System
+library_handler.py — FractalScript Library System
 
 Discovers Python (.py) and EzLibrary (.el) files in the libraries/ folder.
   - .py files: standard Python modules (callable via call(Lib[...] {...}))
-  - .el files: command-definition files (adds new syntax to EzCode)
+  - .el files: command-definition files (adds new syntax to FractalScript)
 """
 
 import os
 import sys
 import importlib
+import inspect
 
 LIBRARIES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "libraries")
 
@@ -93,7 +94,7 @@ def load(name: str):
 
 
 def call(lib_name, func_name, *args):
-    """Call a function from a .py library."""
+    """Call a function from a .py library. Passes runner as keyword arg if accepted."""
     mod = _py_loaded.get(lib_name) or load(lib_name)
     if mod is None:
         print(f"[LIB] Library '{lib_name}' not loaded")
@@ -108,6 +109,11 @@ def call(lib_name, func_name, *args):
         print(f"  Available: {', '.join(avail)}")
         return None
     try:
+        import runtime
+        rt = runtime.get()
+        sig = inspect.signature(func)
+        if "runner" in sig.parameters:
+            return func(*args, runner=rt)
         return func(*args)
     except Exception as e:
         print(f"[LIB ERROR] '{lib_name}.{func_name}({args})': {e}")
@@ -125,7 +131,7 @@ def list_functions(lib_name):
 
 
 if __name__ == "__main__":
-    print("EzCode Library Handler")
+    print("FractalScript Library Handler")
     print(f"  Directory: {LIBRARIES_DIR}")
     found = discover()
     if found:
