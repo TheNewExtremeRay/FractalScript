@@ -1,7 +1,7 @@
 """
 el_compiler.py — EzLibrary (.el) Command Compiler
 
-Parses .el files — a dead-simple format for adding NEW COMMANDS to EzCode.
+Parses .el files — a dead-simple format for adding NEW COMMANDS to FractalScript.
 
 Each .el file defines one or more commands that become available directly
 in .ez scripts after importing.
@@ -31,6 +31,13 @@ import re
 
 class ELError(Exception):
     pass
+
+
+# ── Global overrides bridge ───────────────────────────────────
+# Allows .el Func code to set runner globals via set_global().
+# Runner reads and applies these each frame.
+
+GLOBAL_OVERRIDES = []
 
 
 # ── Parsing helpers ───────────────────────────────────────────
@@ -72,24 +79,41 @@ def _read_block_lines(lines, start):
 def _parse_block_body(body_lines):
     """
     Parse key:value lines from a block body.
-    Supports multi-line values for Func — lines after Func: are included
-    until the next key: line or end of block.
+    Supports multi-line quoted values — if a value starts with ' or ",
+    lines are consumed until the matching closing quote is found.
     Returns dict of {key: value}.
     """
     result = {}
     current_key = None
     current_val = []
+    in_multiline = False
+    multiline_quote = None
 
     for line in body_lines:
+        if in_multiline:
+            current_val.append(line)
+            stripped = line.strip()
+            if stripped.endswith(multiline_quote) or stripped.endswith(multiline_quote + ")"):
+                in_multiline = False
+            continue
+
         # Check if this line starts a new key: value
-        m = re.match(r"(\w[\w.]*)\s*:\s*(.*)", line)
+        m = re.match(r"\s*(\w[\w.]*)\s*:\s*(.*)", line)
         if m:
             # Save previous key if any
             if current_key is not None:
                 result[current_key] = "\n".join(current_val).strip()
 
             current_key = m.group(1)
-            current_val = [m.group(2).strip()]
+            val = m.group(2).strip()
+            current_val = [val]
+
+            # Check if value starts with a quote (multi-line)
+            if val.startswith("'") or val.startswith('"'):
+                multiline_quote = val[0]
+                rest = val[1:]
+                if multiline_quote not in rest:
+                    in_multiline = True
         else:
             # Continuation of previous value
             if current_key is not None:
@@ -104,7 +128,12 @@ def _parse_block_body(body_lines):
         v = result[k]
         if (v.startswith('"') and v.endswith('"')) or \
            (v.startswith("'") and v.endswith("'")):
-            result[k] = v[1:-1]
+            v = v[1:-1]
+        # Strip blank lines from multi-line Func code
+        if k == "Func" and "\n" in v:
+            lines = [l for l in v.split("\n") if l.strip()]
+            v = "\n".join(lines)
+        result[k] = v
 
     return result
 
@@ -124,9 +153,31 @@ def parse_el_file(path):
         raw_lines = f.readlines()
 
     # Strip comments & blank lines, keep braces
+    # Track multi-line quoted values so // inside Func code isn't stripped
     cleaned = []
+    in_func_block = False
+    func_quote = None
     for line in raw_lines:
-        line = _strip_comment(line)
+        stripped_for_check = line.strip()
+
+        # Track if we're inside a multi-line Func: '...' block
+        if not in_func_block:
+            # Check if this line starts a key with a quoted value
+            km = re.match(r"\s*(\w[\w.]*)\s*:\s*(['\"])", line)
+            if km:
+                func_quote = km.group(2)
+                val_start = line[km.end(2):]
+                # If closing quote not on same line, we're in multi-line
+                if func_quote not in val_start:
+                    in_func_block = True
+            line = _strip_comment(line)
+        else:
+            # Inside multi-line quoted value — don't strip comments
+            # Check if this line ends the quoted value
+            if stripped_for_check.endswith(func_quote) or stripped_for_check.endswith(func_quote + ")"):
+                in_func_block = False
+                func_quote = None
+
         if line.strip():
             cleaned.append(line)
 
@@ -144,6 +195,7 @@ def parse_el_file(path):
                 "name": parsed.get("Library.name", ""),
                 "version": parsed.get("Library.version", ""),
                 "package": parsed.get("Package.identifier", ""),
+                "bypass": parsed.get("Library.bypass", "").lower() == "true",
             }
             continue
 
@@ -191,7 +243,7 @@ def extract_params(syntax_template, command_line):
                 if name:
                     param_names.append(name)
                     # Match: "quoted" or 'quoted' or unquoted text (no spaces/parens)
-                    regex_str += r'"([^"]*)"|' + r"'([^']*)'|" + r"([^\s()]+)"
+                    regex_str += r'(?:' + r'"([^"]*)"' + r"|" + r"'([^']*)'" + r"|" + r"([^\s()]+)" + r')'
                     i = end + 1
                     continue
         regex_str += re.escape(normalized[i])
@@ -219,21 +271,46 @@ def extract_params(syntax_template, command_line):
 
 # ── Command executor ──────────────────────────────────────────
 
-def exec_command(func_code, params, cmd_name):
-    """Execute Func Python code with extracted params as local variables."""
+def _make_set_global():
+    """Create a set_global function that appends to GLOBAL_OVERRIDES."""
+    def set_global(key, value):
+        GLOBAL_OVERRIDES.append({"key": key, "value": value})
+    return set_global
+
+
+def exec_command(func_code, params, cmd_name, bypass=False):
+    """Execute Func Python code with extracted params as local variables.
+    If bypass=True, exec in runtime's namespace — function defs become overrides."""
     try:
-        scope = {}
-        scope.update(params)
-        import builtins
-        scope.update(vars(builtins))
-        scope.update({
-            "print": lambda *a, **kw: print("[CMD]", *a, **kw),
-            "fetch": lambda url: _http_get(url),
-            "os": __import__("os"),
-            "json": __import__("json"),
-            "sys": __import__("sys"),
-        })
-        exec(func_code, scope)
+        import runtime
+        rt = runtime.get()
+        if bypass and rt is not None:
+            # Bypass mode: exec in runtime module namespace
+            ns = vars(rt).copy()
+            ns.update(params)
+            ns["set_global"] = _make_set_global()
+            ns["fetch"] = lambda url: _http_get(url)
+            exec(func_code, ns)
+            # Copy any new/changed attrs back to runtime module
+            for k, v in ns.items():
+                if not k.startswith("_") and callable(v):
+                    setattr(rt, k, v)
+        else:
+            # Normal mode: isolated scope
+            scope = {}
+            scope.update(params)
+            import builtins
+            scope.update(vars(builtins))
+            scope.update({
+                "print": lambda *a, **kw: print("[CMD]", *a, **kw),
+                "fetch": lambda url: _http_get(url),
+                "os": __import__("os"),
+                "json": __import__("json"),
+                "sys": __import__("sys"),
+                "set_global": _make_set_global(),
+                "runtime": __import__("runtime"),
+            })
+            exec(func_code, scope)
     except Exception as e:
         print(f"[CMD ERROR] In command '{cmd_name}': {e}")
         import traceback
@@ -258,10 +335,11 @@ def load_el_file(path):
     Parse a .el file and return ready-to-use command data.
 
     Returns dict:
-      {"info": {name, version, package},
-       "commands": [{syntax, func, name, params}, ...]}
+      {"info": {name, version, package, bypass},
+       "commands": [{syntax, func, name, params, bypass}, ...]}
     """
     def_info, cmds = parse_el_file(path)
+    lib_bypass = def_info.get("bypass", False)
 
     processed = []
     for c in cmds:
@@ -274,6 +352,7 @@ def load_el_file(path):
             "func": c["func"],
             "name": cmd_name,
             "params": param_names,
+            "bypass": lib_bypass,
         })
 
     return {
@@ -291,7 +370,7 @@ if __name__ == "__main__":
 Def {
   Library.name: "GitFetch"
   Library.version: v1.0
-  Package.identifier: "project1.ezcode.gitfetch"
+  Package.identifier: "project1.fractalscript.gitfetch"
 }
 
 Cmd {
